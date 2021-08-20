@@ -8,7 +8,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive.file",
     "https://www.googleapis.com/auth/drive"
 ]
-SERVICE_ACCOUNT_FILE = 'creds.json'
+SERVICE_ACCOUNT_FILE = 'google-credentials.json'
 SPREADSHEET_ID = '13-GsSLnll2SxUpQYHcZWbQFNuj9EzOP-dfFvUJapKkg'
 
 creds = service_account.Credentials.from_service_account_file(
