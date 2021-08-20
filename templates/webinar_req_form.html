@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 0 2% 0 2%;">
+    <h2 style="padding:1% 0 0 0">Webinar Request Form</h2>
+    <h4>You are requesting for : {{ room_select }}</h4>
+    <h4>On : {{ date }}</h4>
+    <h4>From : {{ start }} To {{ end }}</h4>
+    <hr>
+    <h5>
+        NOTE: Submitting this form does not mean the session is confirmed.
+        If the requested time slot is available, Smruthi will provide you with
+        a confirmation. Until then, please do not announce the session to
+        participants.
+    </h5>
+    <hr>
+    <div style="text-align:left">
+        <form action="{{ url_for('webinar_req', room='pass') }}" method="post">
+            {{ form.csrf_token }}
+            <p>
+                {{ form.email.label }}
+                {{ form.email() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.zone.label }}
+                {{ form.zone() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.org.label }}
+                {{ form.org() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p style="display:inline-block">
+                {{ form.module_name.label }}
+                {{ form.module_name() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <p id="other_mod" style="display:inline-block;padding-left:0.2%;">
+                {{ form.other_module.label }}
+                {{ form.other_module(size=30) }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p style="display:inline-block">
+                {{ form.language_name.label }}
+                {{ form.language_name() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <p id="other_lang" style="display:inline-block;padding-left:0.2%;">
+                {{ form.other_language.label }}
+                {{ form.other_language(size=30) }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p style="display:inline-block">
+                {{ form.platform_name.label }}
+                {{ form.platform_name() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <p id="other_plat" style="display:inline-block;padding-left:0.2%;">
+                {{ form.other_platform.label }}
+                {{ form.other_platform(size=30) }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.cond_ish.label }}
+                {{ form.cond_ish() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.prog_name.label }}
+                {{ form.prog_name() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p style="display:inline-block">
+                {{ form.channel_name.label }}
+                {{ form.channel_name() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <p id="other_chan" style="display:inline-block;padding-left:0.2%;">
+                {{ form.other_channel.label }}
+                {{ form.other_channel(size=30) }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.need_tech.label }}
+                {{ form.need_tech() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.mat_need.label }}
+                {{ form.mat_need(rows=5) }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.req_person.label }}
+                {{ form.req_person() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.wa_num.label }}
+                {{ form.wa_num() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.comments.label }}
+                {{ form.comments(rows=5) }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p style="text-align:center;">
+                {{ form.submit_form }}
+            </p>
+        </form>
+    </div>
+    <script>
+function myFunction() {
+  let module_box_value = document.getElementById("module_name").value;
+  let language_box_value = document.getElementById("language_name").value;
+  let platform_box_value = document.getElementById("platform_name").value;
+  let chan_box_value = document.getElementById("channel_name").value;
+  if (module_box_value === "other_choice") {
+    document.getElementById("other_mod").style.visibility = "visible";
+    document.getElementById("other_module").disabled = false;
+  } else {
+    document.getElementById("other_mod").style.visibility = "hidden";
+    document.getElementById("other_module").disabled = true;
+  };
+  if (language_box_value === "other_choice") {
+    document.getElementById("other_lang").style.visibility = "visible";
+    document.getElementById("other_language").disabled = false;
+  } else {
+    document.getElementById("other_lang").style.visibility = "hidden";
+    document.getElementById("other_language").disabled = true;
+  };
+  if (platform_box_value === "other_choice") {
+    document.getElementById("other_plat").style.visibility = "visible";
+    document.getElementById("other_platform").disabled = false;
+  } else {
+    document.getElementById("other_plat").style.visibility = "hidden";
+    document.getElementById("other_platform").disabled = true;
+  };
+  if (chan_box_value === "other_choice") {
+    document.getElementById("other_chan").style.visibility = "visible";
+    document.getElementById("other_channel").disabled = false;
+  } else {
+    document.getElementById("other_chan").style.visibility = "hidden";
+    document.getElementById("other_channel").disabled = true;
+  };
+};
+
+    </script>
+</div>
+{% endblock %}

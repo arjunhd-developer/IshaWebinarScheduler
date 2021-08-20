@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1>Search Results :</h1><br><br>
+    <h2>On {{ date }}, from {{ start_t }} to {{ end_t }}</h2><br>
+    <hr>
+    <h3> {{ g_status_text }} </h3>
+    {% if g_status == True: %}
+        <div class="btn">
+            <a href=" {{ url_for('webinar_req', room='n1g') }} " class="btn btn-primary" aria-current="page">Request Nalanda 1 Glass Room</a>
+        </div>
+    {% endif %}
+    <hr>
+    <h3> {{ tr_status_text }} </h3>
+    {% if tr_status == True: %}
+        <div class="btn">
+            <a href=" {{ url_for('webinar_req', room='n1tr') }} " class="btn btn-primary" aria-current="page">Request Nalanda 1 Training Room</a>
+        </div>
+    {% endif %}
+    <hr>
+    <div class="btn">
+        <a href=" {{ url_for('webinar_req', room='other') }} " class="btn btn-secondary" aria-current="page">Enquire The Availability Of Other Rooms</a>
+    </div>
+    <hr>
+</div>
+{% endblock %}

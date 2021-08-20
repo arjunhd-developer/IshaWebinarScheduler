@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h1 style="padding: 1.5%;">Search </h1>
+    <form action="{{ url_for('slot_search') }}" method="post">
+        <p>
+			{{ form.date.label }}
+			{{ form.date(class='datepicker') }}
+			{{ form.hidden_tag() }}
+        </p>
+        <p>
+            {{ form.starttime.label }}
+            {{ form.starttime(class='timepicker') }}
+            {{ form.hidden_tag() }}
+        </p>
+        <p>
+            {{ form.endtime.label }}
+            {{ form.endtime(class='timepicker') }}
+            {{ form.hidden_tag() }}
+        </p>
+        <p style="padding: 1.5%;">
+            {{ form.submit }}
+        </p>
+    </form>
+</div>
+{% endblock %}
