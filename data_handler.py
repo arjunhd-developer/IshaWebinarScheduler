@@ -3,6 +3,7 @@ import datetime as dt
 from data_structure import MainDataStructure, DateTimeStructure
 from flask import render_template, session, redirect
 from forms import WebinarRequestForm
+from dateutil import parser as date_parser
 
 
 class DataHandler:
@@ -14,21 +15,11 @@ class DataHandler:
         self.sheet = Gspread()
         self.main_data = self.sheet.main_data
         self.response = None
-        self.datetimeobj = None
-        self.n1g_available = None
-        self.n1tr_available = None
-        self.n1g_status = ""
-        self.n1tr_status = ""
 
     def create_datetime_obj(self, date, start_t, end_t):
-        self.datetimeobj = None
-        start_timestamp = dt.datetime.combine(date, start_t)
-        end_timestamp = dt.datetime.combine(date, end_t)
-        self.datetimeobj = DateTimeStructure(
-            date,
-            start_timestamp,
-            end_timestamp
-        )
+        session["date"] = date
+        session["start_timestamp"] = dt.datetime.combine(date, start_t)
+        session["end_timestamp"] = dt.datetime.combine(date, end_t)
 
     def struct_data_n1g(self):
         self.sheet = Gspread()
@@ -94,61 +85,71 @@ class DataHandler:
 
     def check_availability(self):
         self.response = None
-        user_date = self.datetimeobj.date
-        date_text = dt.datetime.strftime(user_date, "%d/%m/%Y")
-        session["date"] = date_text
-        web_start = self.datetimeobj.start_time
-        web_start_text = dt.datetime.strftime(web_start, "%H:%M %p")
-        session["web_start"] = dt.datetime.strftime(web_start, "%H:%M:%S")
-        web_end = self.datetimeobj.end_time
-        web_end_text = dt.datetime.strftime(web_end, "%H:%M %p")
-        session['web_end'] = dt.datetime.strftime(web_end, "%H:%M:%S")
-        self.n1g_available = None
-        self.n1tr_available = None
-        self.n1g_status = ""
-        self.n1tr_status = ""
+        session["datetext"] = dt.datetime.strftime(
+            date_parser.parse(session["date"]), "%d/%m/%Y"
+        )
+        session["web_start_text"] = dt.datetime.strftime(
+            session["start_timestamp"], "%H:%M %p"
+        )
+        session["web_start"] = dt.datetime.strftime(
+            session["start_timestamp"], "%H:%M:%S"
+        )
+        session["web_end_text"] = dt.datetime.strftime(
+            session["end_timestamp"], "%H:%M %p"
+        )
+        session['web_end'] = dt.datetime.strftime(
+            session["end_timestamp"], "%H:%M:%S"
+        )
+        session["n1g_available"] = None
+        session["n1tr_available"] = None
+        session["n1g_status"] = ""
+        session["n1tr_status"] = ""
         n1g_conflict_counter = 0
         n1tr_conflict_counter = 0
         for webinar in self.n1g_data_base:
-            if webinar.date == user_date:
-                if web_start >= webinar.event_finish + dt.timedelta(minutes=58):
+            if webinar.date == session["date"]:
+                if session["web_start"] >= webinar.event_finish + \
+                        dt.timedelta(minutes=58):
                     n1g_conflict_counter += 0
-                elif web_end <= webinar.event_start - dt.timedelta(minutes=58):
+                elif session['web_end'] <= webinar.event_start - \
+                        dt.timedelta(minutes=58):
                     n1g_conflict_counter += 0
                 else:
                     n1g_conflict_counter += 1
         for webinar in self.n1tr_data_base:
-            if webinar.date == user_date:
-                if web_start >= webinar.event_finish + dt.timedelta(minutes=58):
+            if webinar.date == session["date"]:
+                if session["web_start"] >= webinar.event_finish + \
+                        dt.timedelta(minutes=58):
                     n1tr_conflict_counter += 0
-                elif web_end <= webinar.event_start - dt.timedelta(minutes=58):
+                elif session['web_end'] <= webinar.event_start - \
+                        dt.timedelta(minutes=58):
                     n1tr_conflict_counter += 0
                 else:
                     n1tr_conflict_counter += 1
 
         if n1g_conflict_counter > 0:
-            self.n1g_available = False
-            self.n1g_status = "Nalanda 1 Glass Room is Unavailable !"
+            session["n1g_available"] = False
+            session["n1g_status"] = "Nalanda 1 Glass Room is Unavailable !"
         else:
-            self.n1g_available = True
-            self.n1g_status = "Nalanda 1 Glass Room is Available !"
+            session["n1g_available"] = True
+            session["n1g_status"] = "Nalanda 1 Glass Room is Available !"
 
         if n1tr_conflict_counter > 0:
-            self.n1tr_available = False
-            self.n1tr_status = "Nalanda 1 Training Room is Unavailable !"
+            session["n1tr_available"] = False
+            session["n1tr_status"] = "Nalanda 1 Training Room is Unavailable !"
         else:
-            self.n1tr_available = True
-            self.n1tr_status = "Nalanda 1 Training Room is Available !"
+            session["n1tr_available"] = True
+            session["n1tr_status"] = "Nalanda 1 Training Room is Available !"
 
         self.response = render_template(
             'search_results.html',
-            g_status=self.n1g_available,
-            g_status_text=self.n1g_status,
-            tr_status=self.n1tr_available,
-            tr_status_text=self.n1tr_status,
-            date=date_text,
-            start_t=web_start_text,
-            end_t=web_end_text
+            g_status=session["n1g_available"],
+            g_status_text=session["n1g_status"],
+            tr_status=session["n1tr_available"],
+            tr_status_text=session["n1tr_status"],
+            date=session["datetext"],
+            start_t=session["web_start_text"],
+            end_t=session["web_end_text"]
         )
 
     def webinar_form_struct_data(self, room):
@@ -163,9 +164,10 @@ class DataHandler:
             ) == "Other Module":
                 session['module_name'] = web_form.other_module.data
             else:
-                session['module_name'] = dict(web_form.module_name.choices).get(
-                    web_form.module_name.data
-                )
+                session['module_name'] = \
+                    dict(web_form.module_name.choices).get(
+                        web_form.module_name.data
+                    )
             if dict(web_form.language_name.choices).get(
                 web_form.language_name.data
             ) == "Other Language":
@@ -221,7 +223,9 @@ class DataHandler:
     def webinar_form_process(self):
         self.data_set = []
         sheet = GSheetApi()
-        date = session['date']
+        date = dt.datetime.strftime(
+            date_parser.parse(session["date"]), "%d/%m/%Y"
+        )
         start_time = session['web_start']
         end_time = session['web_end']
         room_select = session['room_select']
