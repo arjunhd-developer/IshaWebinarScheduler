@@ -22,6 +22,7 @@ img {vertical-align: middle;}
 }
 
 .center_tab {
+    font-size: 50%;
     text-align: center;
     max-width: 60%;
     margin: auto;
