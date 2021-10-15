@@ -44,7 +44,7 @@ class Gspread:
         self.n1tr_data = self.n1tr_sheet.get_all_records()
 
     def sort_alpha(self):
-        self.main_sheet.sort((1, 'asc'))
+        self.main_sheet.sort((1, 'asc'), range="A3:S1000")
 
 
 class GSheetApi:

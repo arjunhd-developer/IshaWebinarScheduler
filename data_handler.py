@@ -1,6 +1,6 @@
 from gsheet import Gspread, GSheetApi
 import datetime as dt
-from data_structure import MainDataStructure, DateTimeStructure
+from data_structure import MainDataStructure, SliderDataStruct
 from flask import render_template, session, redirect
 from forms import WebinarRequestForm
 from dateutil import parser as date_parser
@@ -12,9 +12,61 @@ class DataHandler:
         self.n1g_data_base = []
         self.n1tr_data_base = []
         self.data_set = []
+        self.data_base = []
+        self.master_data_set = []
+        self.quote_data_set = []
         self.sheet = Gspread()
         self.main_data = self.sheet.main_data
         self.response = None
+        self.today = dt.datetime.today().strftime("%d/%m/%Y")
+
+    def struct_quote_data(self):
+        self.response = None
+        self.data_base = []
+        self.sheet.sort_alpha()
+        self.sheet.get_all_records()
+        for data in self.main_data:
+            if data['Date'] != "":
+                date = dt.datetime.strptime(data['Date'], '%Y-%m-%d').strftime('%d/%m/%Y')
+                month = data['Month']
+                name = data['WebinarName']
+                reg = data['Category']
+                room = data['Room']
+                start_time = data['StartTime']
+                end_time = data['EndTime']
+                year = data['Year']
+                # year = dt.datetime.strptime(date, "%Y-%m-%d").strftime('%Y')
+                data_obj = SliderDataStruct(date, month, name, reg, room,
+                                            start_time, end_time, year)
+                self.data_base.append(data_obj)
+
+    def search_day(self):
+        self.struct_quote_data()
+        item_index = -1
+        self.response = None
+        self.quote_data_set = []
+        self.master_data_set = []
+        self.today = dt.datetime.today().strftime('%d/%m/%Y')
+
+        for data in self.data_base:
+            if data.date == self.today:
+                item = {
+                    "date": data.date,
+                    "month": data.month,
+                    "name": data.name,
+                    "reg": data.reg,
+                    "room": data.room,
+                    "start_time": data.start_time,
+                    "end_time": data.end_time
+                }
+                self.quote_data_set.append(item)
+                item_index += 1
+                if (item_index+1) % 12 == 0:
+                    self.master_data_set.append(self.quote_data_set)
+                    self.quote_data_set = []
+        if self.quote_data_set != []:
+            self.master_data_set.append(self.quote_data_set)
+            self.quote_data_set = []
 
     def create_datetime_obj(self, date, start_t, end_t):
         session["date"] = date

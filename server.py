@@ -1,6 +1,7 @@
-from flask import Flask, render_template, session, redirect
+from flask import Flask, render_template, redirect
 from forms import SearchForm
 from data_handler import DataHandler
+from quote_scraper import QuoteScraper
 import os
 
 app = Flask(__name__)
@@ -11,6 +12,24 @@ data_h = DataHandler()
 
 @app.route('/')
 def home():
+    quote = QuoteScraper()
+    quote.get_quote()
+    data_handler = DataHandler()
+    data_handler.struct_quote_data()
+    data_handler.search_day()
+    date_today = data_handler.today
+    print(f"{len(data_handler.master_data_set)} is the len of Master Data Set")
+    return render_template(
+        "home.html",
+        quote_date=quote.quote_date.text,
+        img_src=quote.quote_pic['src'],
+        quote_text=quote.quote_text.div.text.strip(),
+        master_data_set=data_handler.master_data_set,
+        today=date_today
+    )
+
+@app.route('/calendar')
+def calendar():
     return render_template("index.html")
 
 

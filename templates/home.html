@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="slideshow-container">
+
+    <div class="mySlides fadeit center_div">
+        <div class="text"> {{ quote_date }}</div>
+        <img src={{ img_src }} style="max-width:80%">
+        <div class="text quote_text">{{ quote_text }}</div>
+    </div>
+
+    {% for data_set in master_data_set: %}
+    <div class="mySlides fadeit">
+        <div class="text"> Schedule For : {{ today }}</div>
+        <div class="center_tab">
+            <table>
+                <tr>
+                    <th>Webinar Name</th>
+                    <th>Room</th>
+                    <th>Category</th>
+                    <th>Start Time</th>
+                    <th>Finish Time</th>
+                </tr>
+                {% for data in data_set: %}
+                <tr>
+                    <td> {{ data["name"] }}</td>
+                    <td> {{ data["room"] }}</td>
+                    <td> {{ data["reg"] }}</td>
+                    <td> {{ data["start_time"] }}</td>
+                    <td> {{ data["end_time"] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<br>
+
+<div style="text-align:center">
+    {% for dot in range(0, ((master_data_set|length) + 1)): %}
+    <span class="dot"></span>
+    {% endfor %}
+</div>
+
+<script>
+var slideIndex = 0;
+showSlides();
+
+function showSlides() {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  var dots = document.getElementsByClassName("dot");
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  slideIndex++;
+  if (slideIndex > slides.length) {slideIndex = 1}
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";
+  dots[slideIndex-1].className += " active";
+  setTimeout(showSlides, 30000); // Change image every 30 seconds
+}
+var timer = function() {
+    setTimeout(function(){ window.location.reload(); }, 7200000);
+};
+timer();
+
+</script>
+{% endblock %}
