@@ -161,55 +161,60 @@ class DataHandler:
         n1g_conflict_counter = 0
         n1tr_conflict_counter = 0
         session['date'] = date_parser.parse(session["date"]).date()
-        for webinar in self.n1g_data_base:
-            if webinar.date == session["date"]:
-                if session["web_start"] >= webinar.event_finish + \
-                        dt.timedelta(minutes=58):
-                    n1g_conflict_counter += 0
-                elif session['web_end'] <= webinar.event_start - \
-                        dt.timedelta(minutes=58):
-                    n1g_conflict_counter += 0
+        if session['date'] >= dt.datetime.today().date():
+            for webinar in self.n1g_data_base:
+                if webinar.date == session["date"]:
+                    if session["web_start"] >= webinar.event_finish + \
+                            dt.timedelta(minutes=58):
+                        n1g_conflict_counter += 0
+                    elif session['web_end'] <= webinar.event_start - \
+                            dt.timedelta(minutes=58):
+                        n1g_conflict_counter += 0
+                    else:
+                        n1g_conflict_counter += 1
                 else:
-                    n1g_conflict_counter += 1
-            else:
-                n1g_conflict_counter += 0
-        for webinar in self.n1tr_data_base:
-            if webinar.date == session["date"]:
-                if session["web_start"] >= webinar.event_finish + \
-                        dt.timedelta(minutes=58):
-                    n1tr_conflict_counter += 0
-                elif session['web_end'] <= webinar.event_start - \
-                        dt.timedelta(minutes=58):
-                    n1tr_conflict_counter += 0
+                    n1g_conflict_counter += 0
+            for webinar in self.n1tr_data_base:
+                if webinar.date == session["date"]:
+                    if session["web_start"] >= webinar.event_finish + \
+                            dt.timedelta(minutes=58):
+                        n1tr_conflict_counter += 0
+                    elif session['web_end'] <= webinar.event_start - \
+                            dt.timedelta(minutes=58):
+                        n1tr_conflict_counter += 0
+                    else:
+                        n1tr_conflict_counter += 1
                 else:
-                    n1tr_conflict_counter += 1
+                    n1tr_conflict_counter += 0
+
+            if n1g_conflict_counter > 0:
+                session["n1g_available"] = False
+                session["n1g_status"] = "Nalanda 1 Glass Room is Unavailable !"
             else:
-                n1tr_conflict_counter += 0
+                session["n1g_available"] = True
+                session["n1g_status"] = "Nalanda 1 Glass Room is Available !"
 
-        if n1g_conflict_counter > 0:
-            session["n1g_available"] = False
-            session["n1g_status"] = "Nalanda 1 Glass Room is Unavailable !"
+            if n1tr_conflict_counter > 0:
+                session["n1tr_available"] = False
+                session["n1tr_status"] = "Nalanda 1 Training Room is Unavailable !"
+            else:
+                session["n1tr_available"] = True
+                session["n1tr_status"] = "Nalanda 1 Training Room is Available !"
+
+            self.response = render_template(
+                'search_results.html',
+                g_status=session["n1g_available"],
+                g_status_text=session["n1g_status"],
+                tr_status=session["n1tr_available"],
+                tr_status_text=session["n1tr_status"],
+                date=session["datetext"],
+                start_t=session["web_start_text"],
+                end_t=session["web_end_text"]
+            )
         else:
-            session["n1g_available"] = True
-            session["n1g_status"] = "Nalanda 1 Glass Room is Available !"
-
-        if n1tr_conflict_counter > 0:
-            session["n1tr_available"] = False
-            session["n1tr_status"] = "Nalanda 1 Training Room is Unavailable !"
-        else:
-            session["n1tr_available"] = True
-            session["n1tr_status"] = "Nalanda 1 Training Room is Available !"
-
-        self.response = render_template(
-            'search_results.html',
-            g_status=session["n1g_available"],
-            g_status_text=session["n1g_status"],
-            tr_status=session["n1tr_available"],
-            tr_status_text=session["n1tr_status"],
-            date=session["datetext"],
-            start_t=session["web_start_text"],
-            end_t=session["web_end_text"]
-        )
+            self.response = render_template(
+                'bygonedate.html'
+            )
 
     def webinar_form_struct_data(self, room):
         self.response = None
