@@ -1,5 +1,6 @@
 from gsheet import Gspread, GSheetApi
 import datetime as dt
+from datetime import timezone
 from data_structure import MainDataStructure, SliderDataStruct
 from flask import render_template, session, redirect
 from forms import WebinarRequestForm
@@ -143,14 +144,15 @@ class DataHandler:
         session["web_start_text"] = dt.datetime.strftime(
             session["start_timestamp"], "%H:%M %p"
         )
-        session["web_start"] = dt.datetime.strftime(
-            session["start_timestamp"], "%H:%M:%S"
+        session["web_start"] = dt.datetime.strptime(dt.datetime.strftime(
+            session["start_timestamp"], "%Y-%m-%d %H:%M:%S"), "%Y-%m-%d %H:%M:%S"
         )
         session["web_end_text"] = dt.datetime.strftime(
             session["end_timestamp"], "%H:%M %p"
         )
-        session['web_end'] = dt.datetime.strftime(
-            session["end_timestamp"], "%H:%M:%S"
+        session["web_end"] = dt.datetime.strptime(dt.datetime.strftime(
+            session["end_timestamp"], "%Y-%m-%d %H:%M:%S"),
+            "%Y-%m-%d %H:%M:%S"
         )
         session["n1g_available"] = None
         session["n1tr_available"] = None
@@ -158,6 +160,7 @@ class DataHandler:
         session["n1tr_status"] = ""
         n1g_conflict_counter = 0
         n1tr_conflict_counter = 0
+        session['date'] = date_parser.parse(session["date"]).date()
         for webinar in self.n1g_data_base:
             if webinar.date == session["date"]:
                 if session["web_start"] >= webinar.event_finish + \
@@ -168,6 +171,8 @@ class DataHandler:
                     n1g_conflict_counter += 0
                 else:
                     n1g_conflict_counter += 1
+            else:
+                n1g_conflict_counter += 0
         for webinar in self.n1tr_data_base:
             if webinar.date == session["date"]:
                 if session["web_start"] >= webinar.event_finish + \
@@ -178,6 +183,8 @@ class DataHandler:
                     n1tr_conflict_counter += 0
                 else:
                     n1tr_conflict_counter += 1
+            else:
+                n1tr_conflict_counter += 0
 
         if n1g_conflict_counter > 0:
             session["n1g_available"] = False
