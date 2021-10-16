@@ -290,9 +290,9 @@ class DataHandler:
             date_parser.parse(session["date"]), "%d/%m/%Y"
         )
         start_time = dt.datetime.strftime(
-            session["start_timestamp"], "%Y-%m-%d %H:%M:%S")
+            session["start_timestamp"], "%H:%M:%S")
         end_time = dt.datetime.strftime(
-            session["end_timestamp"], "%Y-%m-%d %H:%M:%S")
+            session["end_timestamp"], "%H:%M:%S")
         room_select = session['room_select']
         email = session['email']
         zone = session['zone']
