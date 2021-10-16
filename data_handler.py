@@ -1,6 +1,5 @@
 from gsheet import Gspread, GSheetApi
 import datetime as dt
-from datetime import timezone
 from data_structure import MainDataStructure, SliderDataStruct
 from flask import render_template, session, redirect
 from forms import WebinarRequestForm
