@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="padding: 0 2% 0 2%;">
+    <h2 style="padding:1% 0 0 0">Materials Request Form</h2>
+<!--    From and To Dates -->
+    <hr>
+    <h5>
+        NOTE: Submitting this form does not mean that your Material request is confirmed.
+        If the requested items are available, Sirui will provide you with
+        a confirmation. Until then, please do not count on the availability of these items.
+    </h5>
+    <hr>
+    <div style="text-align:left">
+        <form action="{{ url_for('mat_req') }}" method="post">
+            {{ form.csrf_token }}
+            <p>
+                {{ form.poc_name.label }}
+                {{ form.poc_name() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.mats.label }}
+                {{ form.mats(rows=5) }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.borrow_date.label }}
+                {{ form.borrow_date() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.return_date.label }}
+                {{ form.return_date() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p>
+                {{ form.poc_wa_num.label }}
+                {{ form.poc_wa_num() }}
+                {{ form.hidden_tag() }}
+            </p>
+            <hr>
+            <p style="text-align:center;">
+                {{ form.submit }}
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}

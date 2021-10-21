@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect
-from forms import SearchForm
+from forms import SearchForm, MaterialReqForm
 from data_handler import DataHandler
 from quote_scraper import QuoteScraper
 import os
@@ -40,7 +40,6 @@ def slot_search():
     if form.date.data is None:
         return render_template('search.html', form=form)
     elif form.validate_on_submit():
-        data_h = DataHandler()
         data_h.struct_data_n1g()
         data_h.struct_data_n1tr()
         data_h.create_datetime_obj(
@@ -62,6 +61,31 @@ def search_results():
 def webinar_req(room):
     global data_h
     data_h.webinar_form_struct_data(room)
+    return data_h.response
+
+
+@app.route('/material_requests', methods=['GET', 'POST'])
+def mat_req():
+    global data_h
+    data_h.material_form = MaterialReqForm()
+    if data_h.material_form.poc_name.data is None:
+        return render_template('mat_req_form.html', form=data_h.material_form)
+    elif data_h.material_form.validate_on_submit():
+        data_h.create_mat_req_obj(
+            data_h.material_form.poc_name.data,
+            data_h.material_form.mats.data,
+            data_h.material_form.borrow_date.data,
+            data_h.material_form.return_date.data,
+            data_h.material_form.poc_wa_num.data
+        )
+        data_h.mat_req_struct_data()
+        return redirect('mats_proc')
+
+
+@app.route('/mats_proc', methods=['GET', 'POST'])
+def mats_processed():
+    global data_h
+    data_h.submit_mat_req()
     return data_h.response
 
 

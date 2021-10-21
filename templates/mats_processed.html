@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h2 style="padding:8% 0 5% 0;color:#A32B2E">
+        Request Submitted Successfully.
+    </h2>
+    <h3 style="padding: 0 2% 0 2%">
+        If the requested Materials are available, Then you will get a confirmation
+        from Sirui. Until then, please do not count on the availability of these Materials.
+    </h3>
+    <br>
+    <a href=" {{ url_for('mat_req') }} " class="btn btn-primary">Click Here To Make A New Request</a>
+</div>
+{% endblock %}
+

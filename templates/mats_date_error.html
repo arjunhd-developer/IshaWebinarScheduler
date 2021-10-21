@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <h3 style="padding: 0 2% 0 2%">
+        You have entered an invalid date.
+    </h3>
+    <br>
+    <a href=" {{ url_for('mat_req') }} " class="btn btn-primary">Click Here To Try Again</a>
+</div>
+{% endblock %}
+

@@ -2,7 +2,7 @@ from gsheet import Gspread, GSheetApi
 import datetime as dt
 from data_structure import MainDataStructure, SliderDataStruct
 from flask import render_template, session, redirect
-from forms import WebinarRequestForm
+from forms import WebinarRequestForm, MaterialReqForm
 from dateutil import parser as date_parser
 
 
@@ -15,10 +15,12 @@ class DataHandler:
         self.data_base = []
         self.master_data_set = []
         self.quote_data_set = []
+        self.mat_data_set = []
         self.sheet = Gspread()
         self.main_data = self.sheet.main_data
         self.response = None
         self.today = dt.datetime.today().strftime("%d/%m/%Y")
+        self.material_form = None
 
     def struct_quote_data(self):
         self.response = None
@@ -72,6 +74,14 @@ class DataHandler:
         session["date"] = date
         session["start_timestamp"] = dt.datetime.combine(date, start_t)
         session["end_timestamp"] = dt.datetime.combine(date, end_t)
+
+    def create_mat_req_obj(self, poc, mats, borrow_date, return_date, poc_wa_num):
+        session["borrow_date"] = borrow_date
+        session["return_date"] = return_date
+        session["poc"] = poc
+        session["mats"] = mats
+        session["poc_wa_num"] = poc_wa_num
+
 
     def struct_data_n1g(self):
         self.sheet = Gspread()
@@ -314,3 +324,43 @@ class DataHandler:
             mats_needed, req_person, wa_num, comments
         ]
         sheet.write_data(self.data_set)
+
+    def mat_req_struct_data(self):
+        session['poc'] = self.material_form.poc_name.data
+        session['mats'] = self.material_form.mats.data
+        session['borrow_date'] = self.material_form.borrow_date.data
+        session['return_date'] = self.material_form.return_date.data
+        session['poc_wa_num'] = self.material_form.poc_wa_num.data
+
+    def submit_mat_req(self):
+        self.response = None
+        sheet = GSheetApi()
+        self.mat_data_set = []
+        session["borrow_date"] = date_parser.parse(
+            session["borrow_date"]
+        ).date()
+        session["return_date"] = date_parser.parse(
+            session["return_date"]
+        ).date()
+        if session["return_date"] < session["borrow_date"] or session["borrow_date"] < dt.datetime.today().date():
+            self.response = render_template(
+                'mats_date_error.html'
+            )
+        else:
+            session["borrow_date"] = dt.datetime.strftime(
+                session["borrow_date"], '%d/%m/%Y'
+            )
+            session["return_date"] = dt.datetime.strftime(
+                session["return_date"], '%d/%m/%Y'
+            )
+            self.mat_data_set = [
+                session['poc'],
+                session['mats'],
+                session["borrow_date"],
+                session["return_date"],
+                session['poc_wa_num']
+            ]
+            sheet.mat_data(self.mat_data_set)
+            self.response = render_template(
+                'mats_processed.html'
+            )

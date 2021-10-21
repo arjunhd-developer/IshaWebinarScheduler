@@ -60,3 +60,16 @@ class GSheetApi:
             insertDataOption="INSERT_ROWS",
             body=entries
         ).execute()
+
+    def mat_data(self, data):
+        service = build('sheets', 'v4', credentials=creds)
+        data_range = "'Materials Requests'!A2"
+        sheet = service.spreadsheets()
+        entries = {"values": [data]}
+        sheet.values().append(
+            spreadsheetId=SPREADSHEET_ID,
+            range=data_range,
+            valueInputOption="USER_ENTERED",
+            insertDataOption="INSERT_ROWS",
+            body=entries
+        ).execute()

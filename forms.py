@@ -2,7 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField, validators, StringField, PasswordField, \
     SelectField, TextAreaField
 from wtforms.fields.html5 import DateField, TimeField, EmailField
-from wtforms.validators import InputRequired, Email
 
 
 class SearchForm(FlaskForm):
@@ -21,6 +20,34 @@ class SearchForm(FlaskForm):
     endtime = TimeField(
         label='Enter Ending Time',
         format='%H:%M',
+        validators=(validators.DataRequired(),)
+    )
+    submit = SubmitField(label='Enter')
+
+
+class MaterialReqForm(FlaskForm):
+    borrow_date = DateField(
+        label='Enter Borrow Date',
+        format='%Y-%m-%d',
+        validators=(validators.DataRequired(),)
+    )
+    return_date = DateField(
+        label='Enter Return Date',
+        format='%Y-%m-%d',
+        validators=(validators.DataRequired(),)
+    )
+    poc_name = StringField(
+        label='Enter POC Name :',
+        validators=(validators.DataRequired(),)
+    )
+    mats = TextAreaField(
+        label='What material do you need? (Ex: Laptop, '
+              'webcam, Sadhguru photo, etc) Also specify '
+              'the quantity of each item: ',
+        validators=(validators.DataRequired(),)
+    )
+    poc_wa_num = StringField(
+        label="POC's Whatsapp Number : ",
         validators=(validators.DataRequired(),)
     )
     submit = SubmitField(label='Enter')
