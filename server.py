@@ -18,7 +18,6 @@ def home():
     data_handler.struct_quote_data()
     data_handler.search_day()
     date_today = data_handler.today
-    print(f"{len(data_handler.master_data_set)} is the len of Master Data Set")
     return render_template(
         "home.html",
         quote_date=quote.quote_date.text,

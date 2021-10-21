@@ -170,7 +170,11 @@ class DataHandler:
         n1g_conflict_counter = 0
         n1tr_conflict_counter = 0
         session['date'] = date_parser.parse(session["date"]).date()
-        if session['date'] >= dt.datetime.today().date():
+        if session["web_start"] > session["web_end"]:
+            self.response = render_template(
+                'invalid_time.html'
+            )
+        elif session['date'] >= dt.datetime.today().date():
             for webinar in self.n1g_data_base:
                 if webinar.date == session["date"]:
                     if session["web_start"] >= webinar.event_finish + \
