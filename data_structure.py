@@ -28,6 +28,7 @@ class DateTimeStructure:
         self.start_time = start_t
         self.end_time = end_t
 
+
 class SliderDataStruct:
     def __init__(self, in_date, in_month, in_name, in_reg, in_room,
                  in_starttime, in_endtime, in_year):
