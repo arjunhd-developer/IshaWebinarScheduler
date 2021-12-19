@@ -21,8 +21,10 @@ def home():
     return render_template(
         "home.html",
         quote_date=quote.quote_date.text,
-        img_src=quote.quote_pic['src'],
-        quote_text=quote.quote_text.div.text.strip(),
+        img_src='https://images.sadhguru.org/d/46272/1639870212-dec-19-20160721slh0190-e.jpg',
+        # img_src=quote.quote_pic['src'],
+        # quote_text=quote.quote_text.div.text.strip(),
+        quote_text="Integrity means that there is coherence between what you say, what you do, what you think, and how you feel about life around you.",
         master_data_set=data_handler.master_data_set,
         today=date_today
     )
